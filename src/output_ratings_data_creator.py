@@ -45,3 +45,41 @@ def get_last_user_id():
     ratings = pd.read_csv(os.path.join(PROJECT_PATH, "data", "inputs", "goodbooks-10k", "ratings.csv"))
     last_user = (lambda x: x[0] + 1)(ratings.tail(1)["user_id"].to_list())
     return last_user
+
+def create_final_ratings():
+    # Basically just concat the ratings from the goodbooks-10k dataset with the preprocessed personal ratings
+
+    # Raw data
+    goodbooks_ratings_raw = pd.read_csv(os.path.join(PROJECT_PATH, "data", "inputs", "goodbooks-10k", "ratings.csv"))
+    personal_preprocessed = pd.read_csv(os.path.join(PROJECT_PATH, "data", "outputs", "personal_preprocessed.csv"))
+
+    # Concat
+    final_processed = pd.concat([goodbooks_ratings_raw, personal_preprocessed], axis=0, ignore_index=True)
+
+    # Save
+    final_processed.to_csv(os.path.join(PROJECT_PATH, "data", "outputs", "final_ratings.csv"), index=False)
+
+def create_data():
+
+    # Do we have final_ratings.csv?
+    print("Looking for final_ratings.csv...")
+    if not os.path.exists(os.path.join(PROJECT_PATH, "data", "outputs", "final_ratings.csv")):
+
+        print("Not found, creating final_ratings.csv...")
+
+        # Do we have personal_preprocessed.csv?
+        print("\tLooking for personal_preprocessed.csv...")
+        if not os.path.exists(os.path.join(PROJECT_PATH, "data", "outputs", "personal_preprocessed.csv")):
+            
+            print("\tNot found, creating personal_preprocessed.csv...")
+            preprocess()
+            print("\tDone creating personal_preprocessed.csv!")
+
+        else:
+            print("\tFound personal_preprocessed.csv!")
+
+        create_final_ratings()
+        print("Done creating final_ratings.csv!")
+    
+    else:
+        print("Found final_ratings.csv!")

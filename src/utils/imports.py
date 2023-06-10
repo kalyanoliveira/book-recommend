@@ -8,4 +8,4 @@ import os
 from main import PROJECT_PATH
 
 
-from ..data_processor import preprocess
+from ..output_ratings_data_creator import create_data
