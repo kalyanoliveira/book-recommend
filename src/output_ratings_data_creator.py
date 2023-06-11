@@ -1,8 +1,5 @@
-from .utils.imports import os
-from .utils.imports import pd
-from .utils.imports import PROJECT_PATH
-
 def preprocess():
+    from .utils.imports import os, pd, PROJECT_PATH
 
     # Var                               File                        Description
     # goodbooks_books_raw               books.csv                   Contains raw metadata from books
@@ -42,11 +39,15 @@ def preprocess():
     personal_preprocessed.to_csv(os.path.join(PROJECT_PATH, "data", "outputs", "personal_preprocessed.csv"), index=False)
 
 def get_last_user_id():
+    from .utils.imports import os, pd, PROJECT_PATH
+
     ratings = pd.read_csv(os.path.join(PROJECT_PATH, "data", "inputs", "goodbooks-10k", "ratings.csv"))
     last_user = (lambda x: x[0] + 1)(ratings.tail(1)["user_id"].to_list())
     return last_user
 
 def create_final_ratings():
+    from .utils.imports import os, pd, PROJECT_PATH
+
     # Basically just concat the ratings from the goodbooks-10k dataset with the preprocessed personal ratings
 
     # Raw data
@@ -59,27 +60,28 @@ def create_final_ratings():
     # Save
     final_processed.to_csv(os.path.join(PROJECT_PATH, "data", "outputs", "final_ratings.csv"), index=False)
 
-def create_data():
-
+def create_data_or_not():
+    from .utils.imports import os, PROJECT_PATH
+    
     # Do we have final_ratings.csv?
-    print("Looking for final_ratings.csv...")
+    print("Looking for final_ratings.csv ...")
     if not os.path.exists(os.path.join(PROJECT_PATH, "data", "outputs", "final_ratings.csv")):
 
-        print("Not found, creating final_ratings.csv...")
+        print("Not found, creating final_ratings.csv ...")
 
         # Do we have personal_preprocessed.csv?
-        print("\tLooking for personal_preprocessed.csv...")
+        print("\tLooking for personal_preprocessed.csv ...")
         if not os.path.exists(os.path.join(PROJECT_PATH, "data", "outputs", "personal_preprocessed.csv")):
             
-            print("\tNot found, creating personal_preprocessed.csv...")
+            print("\tNot found, creating personal_preprocessed.csv ...")
             preprocess()
-            print("\tDone creating personal_preprocessed.csv!")
+            print("\tDone creating personal_preprocessed.csv !")
 
         else:
-            print("\tFound personal_preprocessed.csv!")
+            print("\tFound personal_preprocessed.csv !")
 
         create_final_ratings()
-        print("Done creating final_ratings.csv!")
+        print("Done creating final_ratings.csv !")
     
     else:
-        print("Found final_ratings.csv!")
+        print("Found final_ratings.csv !")
